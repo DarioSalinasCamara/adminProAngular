@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators, FormsModule } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -13,11 +13,12 @@ export class RegisterComponent {
   public registerForm = this.fb.group({
     nombre: ['asasasaa', Validators.required],
     email: ['asasa@asavg.com', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-    password2: ['', Validators.required],
-    terminos: [false, Validators.required]
-
-  })
+    password: ['123', Validators.required],
+    password2: ['123', Validators.required],
+    terminos: [true, Validators.required]
+  }, {
+    validators: this.comparePasswords('password', 'password2')
+  });
 
 
   constructor( private fb: FormBuilder){}
@@ -46,6 +47,34 @@ export class RegisterComponent {
     
     return !this.registerForm.get('terminos').value && this.formSubmitted;
 
+  }
+
+  contrasenasNoValidas(){
+
+    const pass1 = this.registerForm.get('password').value
+    const pass2 = this.registerForm.get('password2').value
+    
+    if( ( pass1 !== pass2) && this.formSubmitted ){
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
+  comparePasswords(pass1: string, pass2: string){
+
+    return ( formGroup: FormGroup) => {
+
+      const pass1Control = formGroup.get(pass1);
+      const pass2Control = formGroup.get(pass2);
+
+      if( pass1Control.value === pass2Control.value ){
+        pass2Control.setErrors(null);
+      }else {
+        pass2Control.setErrors({ notEqual: true})
+      }
+    }
   }
 
 }
