@@ -39,12 +39,7 @@ export class RegisterComponent {
     this.usuarioService.crearUsuario( this.registerForm.value )
         .subscribe({
           next: resp => console.log('usuario creado', resp),
-          error: err => {
-            
-            Swal.fire('Error', err.error.msg, 'error');
-            //console.warn('Error', err);
-          },
-
+          error: err => Swal.fire('Error', err.error.msg, 'error'),
           complete: () => console.log('Peticion completada')
 
         });
