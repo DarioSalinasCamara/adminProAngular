@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-register',
@@ -21,22 +22,30 @@ export class RegisterComponent {
   });
 
 
-  constructor( private fb: FormBuilder){}
+  constructor( private fb: FormBuilder,
+               private usuarioService: UsuarioService ){ }
 
   crearUsuario() {
     this.formSubmitted = true;
     console.log( this.registerForm.value );
 
-    if( this.registerForm.valid) {
-      console.log('ok');
-    } else {
+    if( this.registerForm.invalid) {
       console.log('ko')
+      return;
     }
+
+    this.usuarioService.crearUsuario( this.registerForm.value )
+        .subscribe({
+          next: resp => console.log('usuario creado', resp),
+          error: err => console.warn('Error', err),
+          complete: () => console.log('Peticion completada')
+
+        });
   }
 
   campoNoValido( campo: string): boolean{
 
-    if( this.registerForm.get(campo).invalid && this.formSubmitted){
+    if( this.registerForm.get(campo).invalid && this.formSubmitted ){
       return true;
     } else {
       return false;
